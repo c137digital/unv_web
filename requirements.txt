@@ -1,0 +1,8 @@
+prospector
+pytest
+pytest-cov
+autopep8
+sphinx
+setuptools
+wheel
+twine
