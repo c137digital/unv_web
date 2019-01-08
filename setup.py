@@ -27,7 +27,9 @@ setup(
     packages=find_packages('src'),
     install_requires=[
         'aiohttp',
-        'uvloop'
+        'uvloop',
+        'ujson',
+        'unv.app==0.1'
     ],
     zip_safe=True
 )
