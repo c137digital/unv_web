@@ -50,8 +50,7 @@ def url_for_private_static(path):
 
 
 def url_with_domain(path):
-    return '{}://{}{}'.format(
-        SETTINGS['app']['protocol'], SETTINGS['app']['domain'], path)
+    return '{}://{}{}'.format(SETTINGS['protocol'], SETTINGS['domain'], path)
 
 
 def make_url_for_func(app):
