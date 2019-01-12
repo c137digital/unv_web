@@ -10,10 +10,9 @@ install:
 script:
   - py.test --cov . --cov-report xml:coverage.xml
 
-# codeclimate coverage => change id to yours
 env:
   global:
-    - CC_TEST_REPORTER_ID=
+    - CC_TEST_REPORTER_ID=41552a275103b47eb11e8e561446381e98d9d537946db592af93c41574641c03
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
