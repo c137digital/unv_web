@@ -1,4 +1,5 @@
-from unv.app.core import create_component_settings, get_project_root
+from unv.app.core import create_component_settings
+from unv.app.helpers import get_project_root
 
 PROJECT_ROOT = get_project_root()
 
@@ -55,12 +56,12 @@ DEFAULTS = {
     'domain': 'app.local',
     'protocol': 'https',
     'host': '0.0.0.0',
-    'port': '8{:03d}',
+    'port': 8000,
     'autoreload': False,
     'static': {
         'paths': {
-            'public': PROJECT_ROOT / 'static' / 'public',
-            'private': PROJECT_ROOT / 'static' / 'private'
+            'public': str(PROJECT_ROOT / 'static' / 'public'),
+            'private': str(PROJECT_ROOT / 'static' / 'private')
         },
         'urls': {
             'public': '/static/public',
@@ -69,8 +70,8 @@ DEFAULTS = {
     },
     'media': {
         'paths': {
-            'public': PROJECT_ROOT / 'media' / 'public',
-            'private': PROJECT_ROOT / 'media' / 'private'
+            'public': str(PROJECT_ROOT / 'media' / 'public'),
+            'private': str(PROJECT_ROOT / 'media' / 'private')
         },
         'urls': {
             'public': '/media/public',

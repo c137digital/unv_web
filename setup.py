@@ -29,7 +29,7 @@ setup(
         'aiohttp',
         'uvloop',
         'ujson',
-        'unv.app==0.1'
+        'unv.app==0.1.2'
     ],
     zip_safe=True
 )
