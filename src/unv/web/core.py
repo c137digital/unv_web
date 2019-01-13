@@ -4,9 +4,11 @@ import pathlib
 import asyncio
 
 import uvloop
-import aiohttp
+
+from aiohttp import web
 
 from unv.app.helpers import get_app_components
+from unv.app.settings import SETTINGS as APP_SETTINGS
 
 from .settings import SETTINGS
 
@@ -15,8 +17,8 @@ def link_component_static_dirs(component):
     component_path = pathlib.Path(
         os.path.realpath(component.__file__)).parent
     static_path = component_path / 'static'
-    public_dir = SETTINGS['web']['static']['paths']['public']
-    private_dir = SETTINGS['web']['static']['paths']['private']
+    public_dir = pathlib.Path(SETTINGS['static']['paths']['public'])
+    private_dir = pathlib.Path(SETTINGS['static']['paths']['private'])
 
     public_app_dirs = str(static_path / public_dir.name / '*')
     for directory in glob.iglob(public_app_dirs):
@@ -29,11 +31,19 @@ def link_component_static_dirs(component):
         os.system('ln -sf {} {}'.format(directory, private_dir))
 
 
-def create_app():
+def create_app(link_static: bool = True):
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    app = aiohttp.web.Application(debug=SETTINGS['app']['debug'])
+    app = web.Application(debug=APP_SETTINGS['debug'])
 
     for component in get_app_components():
         component.setup(app)
+        if link_static:
+            link_component_static_dirs(component)
 
     return app
+
+
+def run_app(app):
+    web.run_app(
+        app, host=SETTINGS['host'], port=SETTINGS['port'], access_log=None
+    )
