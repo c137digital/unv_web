@@ -1,3 +1,5 @@
+import pathlib
+
 from aiohttp import web
 
 from unv.utils.files import calc_crc32_for_file
@@ -24,28 +26,28 @@ async def render_template(
 
 
 def url_for_media(path):
-    path = path.replace(SETTINGS['media']['paths']['public'].as_posix(), '')
+    path = path.replace(SETTINGS['media']['paths']['public'], '')
     return ''.join([SETTINGS['media']['urls']['public'], path])
 
 
 def url_for_private_media(path):
-    path = path.replace(SETTINGS['media']['paths']['private'].as_posix(), '')
+    path = path.replace(SETTINGS['media']['paths']['private'], '')
     return ''.join([SETTINGS['media']['urls']['private'], path])
 
 
-# @cached_no_async
 def url_for_static(path):
-    real_path = SETTINGS['static']['paths']['public'] / path.lstrip('/')
+    real_path = pathlib.Path(SETTINGS['static']['paths']['public'])
+    real_path = real_path / path.lstrip('/')
     hash_ = '?hash={}'.format(calc_crc32_for_file(real_path))
-    path = path.replace(SETTINGS['static']['paths']['public'].as_posix(), '')
+    path = path.replace(SETTINGS['static']['paths']['public'], '')
     return ''.join([SETTINGS['static']['urls']['public'], path, hash_])
 
 
-# @cached_no_async
 def url_for_private_static(path):
-    real_path = SETTINGS['static']['paths']['private'] / path.lstrip('/')
+    real_path = pathlib.Path(SETTINGS['static']['paths']['private'])
+    real_path = real_path / path.lstrip('/')
     hash_ = '?hash={}'.format(calc_crc32_for_file(real_path))
-    path = path.replace(SETTINGS['static']['paths']['private'].as_posix(), '')
+    path = path.replace(SETTINGS['static']['paths']['private'], '')
     return ''.join([SETTINGS['static']['urls']['private'], path, hash_])
 
 
@@ -67,8 +69,7 @@ def make_url_with_domain_for_func(app):
     return url_with_domain_for
 
 
-# @cached_no_async
 def inline_static_from(path):
-    static_path = SETTINGS['static']['paths']['public']
-    with open((static_path / path.lstrip('/')).as_posix(), 'r') as f:
+    static_path = pathlib.Path(SETTINGS['static']['paths']['public'])
+    with open(str(static_path / path.lstrip('/')), 'r') as f:
         return f.read().replace("\n", "")
