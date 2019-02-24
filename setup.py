@@ -31,5 +31,10 @@ setup(
         'ujson',
         'unv.app==0.1.2'
     ],
-    zip_safe=True
+    zip_safe=True,
+    # entry_points={
+    #     'console_scripts': [
+    #         'run = package.app:main',
+    #     ]
+    # },
 )
