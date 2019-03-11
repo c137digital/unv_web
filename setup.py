@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='unv.web',
-    version='0.1.1',
+    version='0.1.2',
     description="""Web application helpers for unv based on aiohttp""",
     url='http://github.com/c137digital/unv_web',
     author='Morty Space',
@@ -28,12 +28,7 @@ setup(
         'aiohttp',
         'uvloop',
         'ujson',
-        'unv.app==0.1.3'
+        'unv.app==0.2'
     ],
-    zip_safe=True,
-    # entry_points={
-    #     'console_scripts': [
-    #         'run = package.app:main',
-    #     ]
-    # },
+    zip_safe=True
 )
