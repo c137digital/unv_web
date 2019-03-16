@@ -1,27 +1,6 @@
 from unv.app.core import create_component_settings
-from unv.app.helpers import get_project_root
+from unv.app.helpers import project_path
 
-PROJECT_ROOT = get_project_root()
-
-PUBLIC_PRIVATE_FILES_AND_URLS_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "paths": {
-            "type": "object",
-            "properties": {
-                "public": {"type": "string", "required": True},
-                "private": {"type": "string", "required": True}
-            }
-        },
-        "urls": {
-            "type": "object",
-            "properties": {
-                "public": {"type": "string", "required": True},
-                "private": {"type": "string", "required": True}
-            }
-        }
-    }
-}
 
 SCHEMA = {
     "type": "object",
@@ -47,8 +26,25 @@ SCHEMA = {
             "type": "boolean",
             "required": "true"
         },
-        "static": PUBLIC_PRIVATE_FILES_AND_URLS_SCHEMA,
-        "media": PUBLIC_PRIVATE_FILES_AND_URLS_SCHEMA
+        "static": {
+            "type": "object",
+            "properties": {
+                "paths": {
+                    "type": "object",
+                    "properties": {
+                        "public": {"type": "string", "required": True},
+                        "private": {"type": "string", "required": True}
+                    }
+                },
+                "urls": {
+                    "type": "object",
+                    "properties": {
+                        "public": {"type": "string", "required": True},
+                        "private": {"type": "string", "required": True}
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -60,22 +56,12 @@ DEFAULTS = {
     'autoreload': False,
     'static': {
         'paths': {
-            'public': str(PROJECT_ROOT / 'static' / 'public'),
-            'private': str(PROJECT_ROOT / 'static' / 'private')
+            'public': project_path('static', 'public'),
+            'private': project_path('static', 'private')
         },
         'urls': {
             'public': '/static/public',
             'private': '/static/private'
-        }
-    },
-    'media': {
-        'paths': {
-            'public': str(PROJECT_ROOT / 'media' / 'public'),
-            'private': str(PROJECT_ROOT / 'media' / 'private')
-        },
-        'urls': {
-            'public': '/media/public',
-            'private': '/media/private'
         }
     }
 }

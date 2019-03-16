@@ -25,16 +25,6 @@ async def render_template(
         text=text, status=status, charset='utf-8', content_type='text/html')
 
 
-def url_for_media(path):
-    path = path.replace(SETTINGS['media']['paths']['public'], '')
-    return ''.join([SETTINGS['media']['urls']['public'], path])
-
-
-def url_for_private_media(path):
-    path = path.replace(SETTINGS['media']['paths']['private'], '')
-    return ''.join([SETTINGS['media']['urls']['private'], path])
-
-
 def url_for_static(path):
     real_path = pathlib.Path(SETTINGS['static']['paths']['public'])
     real_path = real_path / path.lstrip('/')
