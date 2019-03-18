@@ -19,10 +19,11 @@ async def render_template(
             value = await processor(request)
             context[key] = value
 
-    text = template.render(context)
-
     return web.Response(
-        text=text, status=status, charset='utf-8', content_type='text/html')
+        text=template.render(context),
+        status=status, charset='utf-8',
+        content_type='text/html'
+    )
 
 
 def url_for_static(path):
