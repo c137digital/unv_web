@@ -18,7 +18,7 @@ def setup_jinja2(app: web.Application):
 
     settings['loader'] = jinja2.ChoiceLoader([
         jinja2.PackageLoader(package)
-        for package in APP_SETTINGS['app']['components']
+        for package in APP_SETTINGS['components']
     ])
     if 'jinja2.ext.i18n' not in settings.setdefault('extensions', []):
         settings['extensions'].append('jinja2.ext.i18n')
