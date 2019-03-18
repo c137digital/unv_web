@@ -11,8 +11,8 @@ from .helpers import (
 from .settings import SETTINGS
 
 
-def setup_jinja(app: web.Application):
-    settings = SETTINGS.get('jinja', {})
+def setup_jinja2(app: web.Application):
+    settings = SETTINGS.get('jinja2', {})
     if not settings.get('enabled'):
         return
 
@@ -35,4 +35,4 @@ def setup_jinja(app: web.Application):
 
 
 def setup(app: web.Application):
-    setup_jinja(app)
+    setup_jinja2(app)
