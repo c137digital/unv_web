@@ -1,3 +1,4 @@
+import copy
 import jinja2
 
 from aiohttp import web
@@ -12,8 +13,8 @@ from .settings import SETTINGS
 
 
 def setup_jinja2(app: web.Application):
-    settings = SETTINGS.get('jinja2', {})
-    if not settings.get('enabled'):
+    settings = copy.deepcopy(SETTINGS.get('jinja2', {}))
+    if not settings.pop('enabled'):
         return
 
     settings['loader'] = jinja2.ChoiceLoader([
