@@ -3,7 +3,7 @@ from unv.app.helpers import project_path
 
 
 SCHEMA = {
-    'url': {'type': 'string'},
+    'domain': {'type': 'string'},
     'host': {'type': 'string'},
     'port': {'type': 'integer'},
     'autoreload': {'type': 'boolean'},
@@ -35,7 +35,7 @@ SCHEMA = {
 }
 
 DEFAULTS = {
-    'url': 'https://app.local',
+    'domain': 'https://app.local',
     'autoreload': False,
     'jinja2': {'enabled': True},
     'static': {
