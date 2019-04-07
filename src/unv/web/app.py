@@ -31,7 +31,8 @@ def setup_jinja2(app: web.Application):
         'url_with_domain': url_with_domain,
         'url_for': make_url_for_func(app),
         'url_with_domain_for': make_url_with_domain_for_func(app),
-        'DEBUG': not APP_SETTINGS['debug'],
+        'for_debug': APP_SETTINGS['debug'],
+        'for_production': APP_SETTINGS['env'] == 'production'
     })
 
 

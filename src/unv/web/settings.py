@@ -3,54 +3,31 @@ from unv.app.helpers import project_path
 
 
 SCHEMA = {
-    "type": "object",
-    "properties": {
-        "domain": {
-            "type": "string",
-            "required": True
-        },
-        "protocol": {
-            "type": "string",
-            "allowed": ["http", "https"],
-            "required": True
-        },
-        "host": {
-            "type": "string",
-            "required": True
-        },
-        "port": {
-            "type": "integer",
-            "required": True
-        },
-        "autoreload": {
-            "type": "boolean",
-            "required": True
-        },
-        "jinja2": {
-            "type": "object",
-            "properties": {
-                "enabled": {
-                    "type": "boolean",
-                    "required": True
+    'url': {'type': 'string'},
+    'host': {'type': 'string'},
+    'port': {'type': 'integer'},
+    'autoreload': {'type': 'boolean'},
+    'jinja2': {
+        'type': 'dict',
+        'schema': {
+            'enabled': {'type': 'boolean'}
+        }
+    },
+    'static': {
+        'type': 'dict',
+        'schema': {
+            'public': {
+                'type': 'dict',
+                'schema': {
+                    'path': {'type': 'string'},
+                    'url': {'type': 'string'}
                 }
-            }
-        },
-        "static": {
-            "type": "object",
-            "properties": {
-                "paths": {
-                    "type": "object",
-                    "properties": {
-                        "public": {"type": "string", "required": True},
-                        "private": {"type": "string", "required": True}
-                    }
-                },
-                "urls": {
-                    "type": "object",
-                    "properties": {
-                        "public": {"type": "string", "required": True},
-                        "private": {"type": "string", "required": True}
-                    }
+            },
+            'private': {
+                'type': 'dict',
+                'schema': {
+                    'path': {'type': 'string'},
+                    'url': {'type': 'string'}
                 }
             }
         }
@@ -58,22 +35,17 @@ SCHEMA = {
 }
 
 DEFAULTS = {
-    'domain': 'app.local',
-    'protocol': 'https',
-    'host': '0.0.0.0',
-    'port': 8000,
+    'url': 'https://app.local',
     'autoreload': False,
-    'jinja2': {
-        'enabled': True,
-    },
+    'jinja2': {'enabled': True},
     'static': {
-        'paths': {
-            'public': project_path('static', 'public'),
-            'private': project_path('static', 'private')
+        'public': {
+            'path': project_path('static', 'public'),
+            'url': '/static/public',
         },
-        'urls': {
-            'public': '/static/public',
-            'private': '/static/private'
+        'private': {
+            'path': project_path('static', 'private'),
+            'url': '/static/private'
         }
     }
 }
