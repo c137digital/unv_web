@@ -8,7 +8,7 @@ import uvloop
 from aiohttp import web
 
 from unv.app.helpers import get_app_components
-from unv.app.settings import SETTINGS as APP_SETTINGS
+from unv.app.settings import DEVELOPMENT
 
 from .settings import SETTINGS
 
@@ -31,9 +31,9 @@ def link_component_static_dirs(component):
         os.system('ln -sf {} {}'.format(directory, private_dir))
 
 
-def create_app(link_static: bool = True):
+def create_app(link_static: bool = False):
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    app = web.Application(debug=APP_SETTINGS['env'] == 'development')
+    app = web.Application(debug=DEVELOPMENT)
 
     for component in get_app_components():
         component.setup(app)
@@ -43,7 +43,5 @@ def create_app(link_static: bool = True):
     return app
 
 
-def run_app(app):
-    web.run_app(
-        app, host=SETTINGS['host'], port=SETTINGS['port'], access_log=None
-    )
+def run_app(app, host: str, port: int):
+    web.run_app(app, host, port, access_log=None)

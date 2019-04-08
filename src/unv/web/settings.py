@@ -3,31 +3,33 @@ from unv.app.helpers import project_path
 
 
 SCHEMA = {
-    'domain': {'type': 'string'},
-    'host': {'type': 'string'},
-    'port': {'type': 'integer'},
-    'autoreload': {'type': 'boolean'},
+    'domain': {'type': 'string', 'required': True},
+    'autoreload': {'type': 'boolean', 'required': True},
     'jinja2': {
         'type': 'dict',
+        'required': True,
         'schema': {
             'enabled': {'type': 'boolean'}
         }
     },
     'static': {
         'type': 'dict',
+        'required': True,
         'schema': {
             'public': {
                 'type': 'dict',
+                'required': True,
                 'schema': {
-                    'path': {'type': 'string'},
-                    'url': {'type': 'string'}
+                    'path': {'type': 'string', 'required': True},
+                    'url': {'type': 'string', 'required': True}
                 }
             },
             'private': {
                 'type': 'dict',
+                'required': True,
                 'schema': {
-                    'path': {'type': 'string'},
-                    'url': {'type': 'string'}
+                    'path': {'type': 'string', 'required': True},
+                    'url': {'type': 'string', 'required': True}
                 }
             }
         }
