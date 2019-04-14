@@ -29,9 +29,10 @@ class WebAppComponentSettings(AppComponentSettings):
     def domain(self):
         return SETTINGS['domain']
 
-    @property
-    def static(self):
-        return SETTINGS['static']
+    # TODO: move to static class
+    # @property
+    # def static(self):
+    #     return SETTINGS['static']
 
 
 class WebComponentTasks(AppComponentTasks):
