@@ -11,7 +11,13 @@ class WebAppComponentSettings(AppComponentSettings):
     DEFAULT = AppComponentSettings.DEFAULT.update({
         'bin': 'app {settings.port} {instance}',
         'port': 8000,
-        'nginx': {'nginx.conf': 'app.conf'}
+        'nginx': {
+            'config': {
+                'template': 'nginx.conf',
+                'name': 'app.conf'
+            },
+            'gzip': 'on',
+        }
     })
 
     @property
@@ -26,13 +32,8 @@ class WebAppComponentSettings(AppComponentSettings):
             yield Path(template), path
 
     @property
-    def domain(self):
-        return SETTINGS['domain']
-
-    # TODO: move to static class
-    # @property
-    # def static(self):
-    #     return SETTINGS['static']
+    def web(self):
+        return SETTINGS
 
 
 class WebComponentTasks(AppComponentTasks):
