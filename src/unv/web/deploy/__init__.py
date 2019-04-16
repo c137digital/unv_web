@@ -12,13 +12,23 @@ class WebAppComponentSettings(AppComponentSettings):
         'bin': 'app {settings.port} {instance}',
         'port': 8000,
         'nginx': {
+            'redirect_to_https': True,
+            'ssl_certificate': '',
+            'ssl_certificate_key': '',
             'config': {
                 'template': 'nginx.conf',
                 'name': 'app.conf'
-            },
-            'gzip': 'on',
+            }
         }
     })
+
+    @property
+    def ssl_certificate(self):
+        pass
+
+    @property
+    def ssl_certificate_key(self):
+        pass
 
     @property
     def port(self):
