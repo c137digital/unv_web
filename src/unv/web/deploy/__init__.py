@@ -2,6 +2,7 @@ from pathlib import Path
 
 from unv.deploy.components.app import AppComponentSettings, AppComponentTasks
 from unv.deploy.components.nginx import NginxComponentSettings
+from unv.deploy.helpers import get_hosts
 
 from unv.web.settings import SETTINGS
 
@@ -9,26 +10,30 @@ from unv.web.settings import SETTINGS
 class WebAppComponentSettings(AppComponentSettings):
     NAME = 'web'
     DEFAULT = AppComponentSettings.DEFAULT.update({
-        'bin': 'app {settings.port} {instance}',
-        'port': 8000,
-        'nginx': {
-            'redirect_to_https': True,
-            'ssl_certificate': '',
-            'ssl_certificate_key': '',
-            'config': {
-                'template': 'nginx.conf',
-                'name': 'app.conf'
+        'systemd': {
+            'services': {
+                'web.service': {
+                    'name': 'web_{instance}.service',
+                    'boot': True,
+                    'instances': 1
+                }
             }
+        },
+        'use_https': True,
+        'ssl_certificate': 'secure/certs/fullchain.pem',
+        'ssl_certificate_key': 'secure/certs/privkey.pem',
+        'configs': {
+            'nginx.conf': 'app.conf'
         }
     })
 
     @property
     def ssl_certificate(self):
-        pass
+        return self._data['ssl_certificate']
 
     @property
     def ssl_certificate_key(self):
-        pass
+        return self._data['ssl_certificate_key']
 
     @property
     def port(self):
@@ -36,7 +41,7 @@ class WebAppComponentSettings(AppComponentSettings):
 
     @property
     def nginx_configs(self):
-        for template, path in self._data['nginx_configs'].items():
+        for template, path in self._data['configs'].items():
             if not template.startswith('/'):
                 template = (self.local_root / template).resolve()
             yield Path(template), path
@@ -45,10 +50,19 @@ class WebAppComponentSettings(AppComponentSettings):
     def web(self):
         return SETTINGS
 
+    @property
+    def instances(self):
+        return self._data['systemd']['services']['web.service']['instances']
+
 
 class WebComponentTasks(AppComponentTasks):
     SETTINGS = WebAppComponentSettings()
     NAMESPACE = 'web'
+
+    async def _get_upstream_servers(self):
+        for host in get_hosts('web'):
+            for instance in range(1, self._settings.instances + 1):
+                yield f"{host['private']}:{self._settings.port + instance}"
 
     async def sync(self):
         await super().sync()
@@ -59,4 +73,6 @@ class WebComponentTasks(AppComponentTasks):
 
         for template, path in self._settings.nginx_configs:
             self._upload_template(
-                template, nginx.root / nginx.include.parent / path)
+                template, nginx.root / nginx.include.parent / path,
+                {'upstream_servers': list(self._get_upstream_servers())}
+            )
