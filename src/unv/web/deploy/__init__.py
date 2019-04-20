@@ -1,31 +1,36 @@
 from pathlib import Path
 
+from unv.utils.tasks import register
+
 from unv.deploy.components.app import AppComponentSettings, AppComponentTasks
 from unv.deploy.components.nginx import NginxComponentSettings
 from unv.deploy.helpers import get_hosts
 
 from unv.web.settings import SETTINGS
 
+APP_DEFAULT_SETTINGS = AppComponentSettings.DEFAULT.copy()
+APP_DEFAULT_SETTINGS.update({
+    'systemd': {
+        'services': {
+            'app.service': {
+                'name': 'app_{instance}.service',
+                'boot': True,
+                'instances': 1
+            }
+        }
+    },
+    'use_https': True,
+    'ssl_certificate': 'secure/certs/fullchain.pem',
+    'ssl_certificate_key': 'secure/certs/privkey.pem',
+    'configs': {
+        'nginx.conf': 'app.conf'
+    }
+})
+
 
 class WebAppComponentSettings(AppComponentSettings):
     NAME = 'web'
-    DEFAULT = AppComponentSettings.DEFAULT.update({
-        'systemd': {
-            'services': {
-                'web.service': {
-                    'name': 'web_{instance}.service',
-                    'boot': True,
-                    'instances': 1
-                }
-            }
-        },
-        'use_https': True,
-        'ssl_certificate': 'secure/certs/fullchain.pem',
-        'ssl_certificate_key': 'secure/certs/privkey.pem',
-        'configs': {
-            'nginx.conf': 'app.conf'
-        }
-    })
+    DEFAULT = APP_DEFAULT_SETTINGS
 
     @property
     def ssl_certificate(self):
@@ -52,18 +57,21 @@ class WebAppComponentSettings(AppComponentSettings):
 
     @property
     def instances(self):
-        return self._data['systemd']['services']['web.service']['instances']
+        services = self._data['systemd']['services']
+        name = services.keys()[0]
+        return services[name]['instances']
 
 
-class WebComponentTasks(AppComponentTasks):
+class WebAppComponentTasks(AppComponentTasks):
     SETTINGS = WebAppComponentSettings()
-    NAMESPACE = 'web'
+    NAMESPACE = 'app'
 
-    async def _get_upstream_servers(self):
-        for host in get_hosts('web'):
+    def _get_upstream_servers(self):
+        for host in get_hosts('app'):
             for instance in range(1, self._settings.instances + 1):
                 yield f"{host['private']}:{self._settings.port + instance}"
 
+    @register
     async def sync(self):
         await super().sync()
 
