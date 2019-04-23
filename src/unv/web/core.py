@@ -44,4 +44,4 @@ def create_app(link_static: bool = False):
 
 
 def run_app(app, host: str, port: int):
-    web.run_app(app, host, port, access_log=None)
+    web.run_app(app, host=host, port=port, access_log=None)

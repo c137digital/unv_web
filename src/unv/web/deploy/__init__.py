@@ -4,12 +4,20 @@ from unv.utils.tasks import register
 
 from unv.deploy.components.app import AppComponentSettings, AppComponentTasks
 from unv.deploy.components.nginx import NginxComponentSettings
-from unv.deploy.helpers import get_hosts
+from unv.deploy.helpers import get_hosts, as_user
 
 from unv.web.settings import SETTINGS
 
+NGINX_SETTINGS = NginxComponentSettings()
+
 APP_DEFAULT_SETTINGS = AppComponentSettings.DEFAULT.copy()
 APP_DEFAULT_SETTINGS.update({
+    'bin': 'app {instance} {private_ip} {settings.port}',
+    'port': 8000,
+    'use_https': True,
+    'ssl_certificate': 'secure/certs/fullchain.pem',
+    'ssl_certificate_key': 'secure/certs/privkey.pem',
+    'configs': {'nginx.conf': 'app.conf'},
     'systemd': {
         'services': {
             'app.service': {
@@ -19,26 +27,20 @@ APP_DEFAULT_SETTINGS.update({
             }
         }
     },
-    'use_https': True,
-    'ssl_certificate': 'secure/certs/fullchain.pem',
-    'ssl_certificate_key': 'secure/certs/privkey.pem',
-    'configs': {
-        'nginx.conf': 'app.conf'
-    }
 })
 
 
 class WebAppComponentSettings(AppComponentSettings):
-    NAME = 'web'
+    NAME = 'app'
     DEFAULT = APP_DEFAULT_SETTINGS
 
     @property
     def ssl_certificate(self):
-        return self._data['ssl_certificate']
+        return self.home_abs / self._data['ssl_certificate']
 
     @property
     def ssl_certificate_key(self):
-        return self._data['ssl_certificate_key']
+        return self.home_abs / self._data['ssl_certificate_key']
 
     @property
     def port(self):
@@ -56,10 +58,18 @@ class WebAppComponentSettings(AppComponentSettings):
         return SETTINGS
 
     @property
+    def domain(self):
+        return SETTINGS['domain'].split('//')[1]
+
+    @property
     def instances(self):
         services = self._data['systemd']['services']
-        name = services.keys()[0]
+        name = list(services.keys())[0]
         return services[name]['instances']
+
+    @property
+    def use_https(self):
+        return self._data['use_https']
 
 
 class WebAppComponentTasks(AppComponentTasks):
@@ -67,20 +77,30 @@ class WebAppComponentTasks(AppComponentTasks):
     NAMESPACE = 'app'
 
     def _get_upstream_servers(self):
-        for host in get_hosts('app'):
+        for _, host in get_hosts('app'):
             for instance in range(1, self._settings.instances + 1):
                 yield f"{host['private']}:{self._settings.port + instance}"
+
+    @as_user(NGINX_SETTINGS.user)
+    async def _upload_nginx_configs(self):
+        if not NGINX_SETTINGS.enabled:
+            return
+
+        for template, path in self._settings.nginx_configs:
+            nginx_path = (
+                NGINX_SETTINGS.root / NGINX_SETTINGS.include.parent / path
+            )
+            await self._upload_template(
+                template, nginx_path,
+                {
+                    'settings': self._settings,
+                    'upstream_servers': list(self._get_upstream_servers())
+                }
+            )
 
     @register
     async def sync(self):
         await super().sync()
-
+        await self._upload_nginx_configs()
         nginx = NginxComponentSettings()
-        if not nginx.enabled:
-            return
-
-        for template, path in self._settings.nginx_configs:
-            self._upload_template(
-                template, nginx.root / nginx.include.parent / path,
-                {'upstream_servers': list(self._get_upstream_servers())}
-            )
+        print(await self._run('cat {}'.format(nginx.root / nginx.include.parent / 'app.conf')))
