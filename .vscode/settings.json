@@ -1,9 +1,9 @@
 {
     "python.pythonPath": "venv/bin/python",
-    "python.unitTest.nosetestsEnabled": false,
-    "python.unitTest.unittestEnabled": false,
-    "python.unitTest.pyTestEnabled": true,
-    "python.unitTest.pyTestArgs": [
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pyTestEnabled": true,
+    "python.testing.pyTestArgs": [
         "tests"
     ],
     "python.linting.enabled": true,

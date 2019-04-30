@@ -24,13 +24,12 @@ setup(
     package_dir={'': 'src'},
     packages=find_packages('src'),
     install_requires=[
+        'unv.app',
+        'unv.deploy',
         'aiohttp',
         'uvloop',
         'ujson',
-        'jinja2',
-
-        'unv.app',
-        'unv.deploy'
+        'jinja2'
     ],
     zip_safe=True
 )
