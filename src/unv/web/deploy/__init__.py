@@ -2,31 +2,44 @@ from pathlib import Path
 
 from unv.utils.tasks import register
 
-from unv.deploy.tasks import DeployComponentTasksBase
-from unv.deploy.components.systemd import SystemdTasksMixin
+from unv.deploy.components.app import AppComponentTasks, AppComponentSettings
 from unv.deploy.components.nginx import NginxComponentSettings
-from unv.deploy.helpers import get_hosts, as_user, ComponentSettingsBase
+from unv.deploy.helpers import get_hosts
 
 from unv.web.settings import SETTINGS
 
-NGINX_SETTINGS = NginxComponentSettings()
 
-
-class WebAppComponentSettings(ComponentSettingsBase):
-    NAME = 'web'
+class WebAppComponentSettings(AppComponentSettings):
+    NAME = 'app'
     DEFAULT = {
-        'bin': 'web {instance} {private_ip} {settings.port}',
+        'bin': 'app',
+        'settings': 'secure.production',
+        'instance': 1,
+        'host': '0.0.0.0',
         'port': 8000,
         'use_https': True,
         'ssl_certificate': 'secure/certs/fullchain.pem',
         'ssl_certificate_key': 'secure/certs/privkey.pem',
-        'configs': {'nginx.conf': 'web.conf'},
+        'nginx': {
+            'template': 'nginx.conf',
+            'name': 'web.conf'
+        },
         'systemd': {
             'template': 'web.service',
             'name': 'web_{instance}.service',
             'boot': True,
             'instances': {'count': 1}
         },
+        'static': {
+            'public': {
+                'url': '/static/public',
+                'path': 'static/public'
+            },
+            'private': {
+                'url': '/static/private',
+                'path': 'static/private'
+            }
+        }
     }
 
     @property
@@ -50,51 +63,46 @@ class WebAppComponentSettings(ComponentSettingsBase):
 
     @property
     def domain(self):
-        return SETTINGS['domain'].split('//')[1]
+        return SETTINGS['domain']
 
     @property
     def use_https(self):
         return self._data['use_https']
 
+    # TODO: move to static settings base
+    @property
+    def web(self):
+        return SETTINGS
 
-class WebAppComponentTasks(DeployComponentTasksBase, SystemdTasksMixin):
-    SETTINGS = WebAppComponentSettings()
-    NAMESPACE = 'web'
 
-    def _get_upstream_servers(self):
+DEPLOY_SETTINGS = WebAppComponentSettings()
+
+
+class WebAppComponentTasks(AppComponentTasks):
+    SETTINGS = DEPLOY_SETTINGS
+    NAMESPACE = 'app'
+
+    async def _get_upstream_servers(self):
         for _, host in get_hosts('app'):
             with self._set_host(host):
                 count = await self._get_systemd_instances_count()
             for instance in range(1, count + 1):
                 yield f"{host['private']}:{self._settings.port + instance}"
 
-    @register
-    async def sync(self):
-        name = (await self._local('python setup.py --name')).strip()
-        version = (await self._local('python setup.py --version')).strip()
-        package = f'{name}-{version}.tar.gz'
-
-        await self._local('pip install -e .')
-        await self._local('python setup.py sdist bdist_wheel')
-        await self._upload(Path('dist', package))
-        await self._local('rm -rf ./build ./dist')
-        await self._python.pip(f'install -I {package}')
-        await self._rmrf(Path(package))
-        await self._upload(Path('secure'))
-        await self._sync_systemd_units()
-
+    async def _sync_nginx_configs(self):
         nginx = NginxComponentSettings()
-
         if not nginx.enabled:
             return
 
+        servers = [server async for server in self._get_upstream_servers()]
         for template, path in self._settings.nginx_configs:
             with self._set_user(nginx.user):
                 await self._upload_template(
                     template,  nginx.root / nginx.include.parent / path,
-                    {
-                        'settings': self._settings,
-                        'upstream_servers': list(self._get_upstream_servers())
-                    }
+                    {'settings': self._settings, 'upstream_servers': servers}
                 )
-        print(await self._run('cat {}'.format(nginx.root / nginx.include.parent / 'app.conf')))
+
+    @register
+    async def sync(self):
+        await super().sync()
+        await self._sync_nginx_configs()

@@ -37,7 +37,7 @@ SCHEMA = {
 }
 
 DEFAULTS = {
-    'domain': 'https://app.local',
+    'domain': 'app.local',
     'autoreload': False,
     'jinja2': {'enabled': True},
     'static': {
