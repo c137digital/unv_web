@@ -6,8 +6,6 @@ from unv.deploy.components.app import AppComponentTasks, AppComponentSettings
 from unv.deploy.components.nginx import NginxComponentSettings
 from unv.deploy.helpers import get_hosts
 
-from unv.web.settings import SETTINGS
-
 
 class WebAppComponentSettings(AppComponentSettings):
     NAME = 'app'
@@ -17,6 +15,7 @@ class WebAppComponentSettings(AppComponentSettings):
         'instance': 1,
         'host': '0.0.0.0',
         'port': 8000,
+        'domain': 'app.local',
         'use_https': True,
         'ssl_certificate': 'secure/certs/fullchain.pem',
         'ssl_certificate_key': 'secure/certs/privkey.pem',
@@ -33,11 +32,11 @@ class WebAppComponentSettings(AppComponentSettings):
         'static': {
             'public': {
                 'url': '/static/public',
-                'path': 'static/public'
+                'dir': 'static/public'
             },
             'private': {
                 'url': '/static/private',
-                'path': 'static/private'
+                'dir': 'static/private'
             }
         }
     }
@@ -51,28 +50,44 @@ class WebAppComponentSettings(AppComponentSettings):
         return self.home_abs / self._data['ssl_certificate_key']
 
     @property
+    def host(self):
+        return self._data['host']
+
+    @property
     def port(self):
         return self._data['port']
 
     @property
-    def nginx_configs(self):
-        for template, path in self._data['configs'].items():
-            if not template.startswith('/'):
-                template = (self.local_root / template).resolve()
-            yield Path(template), path
+    def nginx_config(self):
+        nginx = self._data['nginx']
+        template, path = nginx['template'], nginx['name']
+        if not template.startswith('/'):
+            template = (self.local_root / template).resolve()
+        return Path(template), path
 
     @property
     def domain(self):
-        return SETTINGS['domain']
+        return self._data['domain']
+
+    @property
+    def static_public_dir(self):
+        return self.home_abs / Path(self._data['static']['public']['dir'])
+
+    @property
+    def static_private_dir(self):
+        return self.home_abs / Path(self._data['static']['private']['dir'])
+
+    @property
+    def static_public_url(self):
+        return self._data['static']['public']['url']
+
+    @property
+    def static_private_url(self):
+        return self._data['static']['private']['url']
 
     @property
     def use_https(self):
         return self._data['use_https']
-
-    # TODO: move to static settings base
-    @property
-    def web(self):
-        return SETTINGS
 
 
 DEPLOY_SETTINGS = WebAppComponentSettings()
@@ -91,16 +106,16 @@ class WebAppComponentTasks(AppComponentTasks):
 
     async def _sync_nginx_configs(self):
         nginx = NginxComponentSettings()
-        if not nginx.enabled:
-            return
+        # if not nginx.enabled:
+        #     return
 
         servers = [server async for server in self._get_upstream_servers()]
-        for template, path in self._settings.nginx_configs:
-            with self._set_user(nginx.user):
-                await self._upload_template(
-                    template,  nginx.root / nginx.include.parent / path,
-                    {'settings': self._settings, 'upstream_servers': servers}
-                )
+        template, path = self._settings.nginx_config
+        with self._set_user(nginx.user):
+            await self._upload_template(
+                template,  nginx.root / nginx.include.parent / path,
+                {'settings': self._settings, 'upstream_servers': servers}
+            )
 
     @register
     async def sync(self):

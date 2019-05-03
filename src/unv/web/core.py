@@ -17,8 +17,8 @@ def link_component_static_dirs(component):
     component_path = pathlib.Path(
         os.path.realpath(component.__file__)).parent
     static_path = component_path / 'static'
-    public_dir = pathlib.Path(DEPLOY_SETTINGS['static']['public']['path'])
-    private_dir = pathlib.Path(DEPLOY_SETTINGS['static']['private']['path'])
+    public_dir = DEPLOY_SETTINGS.static_public_dir
+    private_dir = DEPLOY_SETTINGS.static_private_dir
 
     public_app_dirs = str(static_path / public_dir.name / '*')
     for directory in glob.iglob(public_app_dirs):
@@ -45,6 +45,8 @@ def create_app(link_static: bool = False):
 
 def run_app(app):
     web.run_app(
-        app, host=DEPLOY_SETTINGS.host, port=DEPLOY_SETTINGS.port,
+        app,
+        host=DEPLOY_SETTINGS.host,
+        port=DEPLOY_SETTINGS.port + DEPLOY_SETTINGS.instance,
         access_log=None
     )

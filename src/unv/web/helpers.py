@@ -1,10 +1,8 @@
-import pathlib
-
 from aiohttp import web
 
 from unv.utils.files import calc_crc32_for_file
 
-from .settings import SETTINGS
+from .deploy import DEPLOY_SETTINGS
 
 
 async def render_template(
@@ -26,20 +24,28 @@ async def render_template(
     )
 
 
-def url_for_static(path, private=False, with_hash=False):
-    scope = 'private' if private else 'public'
-    static_url = SETTINGS['static'][scope]['url']
-    static_path = SETTINGS['static'][scope]['path']
-    real_path = pathlib.Path(static_path) / path.lstrip('/')
+def url_for_static(path: str, private: bool = False, with_hash: bool = False):
+    url = DEPLOY_SETTINGS.static_public_url
+    directory = DEPLOY_SETTINGS.static_public_dir
+
+    if private:
+        url = DEPLOY_SETTINGS.static_private_url
+        directory = DEPLOY_SETTINGS.static_private_dir
+
+    real_path = directory / path.lstrip('/')
     hash_ = ''
     if with_hash:
         hash_ = '?hash={}'.format(calc_crc32_for_file(real_path))
-    path = path.replace(static_path, '', 1).lstrip('/')
-    return f"{static_url}/{path}{hash_}"
+    path = str(path).replace(str(directory), '', 1).lstrip('/')
+    return f"{url}/{path}{hash_}"
 
 
-def url_with_domain(path):
-    return '{}{}'.format(SETTINGS['domain'], path)
+def url_with_domain(path: str):
+    protocol = 'http'
+    path = path.lstrip('/')
+    if DEPLOY_SETTINGS.use_https:
+        protocol = 'https'
+    return f'{protocol}://{DEPLOY_SETTINGS.domain}/{path}'
 
 
 def make_url_for_func(app):
@@ -53,7 +59,9 @@ def make_url_for_func(app):
 
 
 def inline_static_from(path, private=False):
-    scope = 'private' if private else 'public'
-    static_path = pathlib.Path(SETTINGS['static'][scope]['path'])
-    with (static_path / path).open('r') as f:
+    directory = DEPLOY_SETTINGS.static_public_dir
+    if private:
+        directory = DEPLOY_SETTINGS.static_private_dir
+
+    with (directory / path).open('r') as f:
         return f.read().replace("\n", "")
