@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='unv.web',
-    version='0.2.4',
+    version='0.2.5',
     description="""Web application helpers for unv based on aiohttp""",
     url='http://github.com/c137digital/unv_web',
     author='Morty Space',
@@ -23,6 +23,7 @@ setup(
     ],
     package_dir={'': 'src'},
     packages=find_packages('src'),
+    include_package_data=True,
     install_requires=[
         'unv.app',
         'unv.deploy',
