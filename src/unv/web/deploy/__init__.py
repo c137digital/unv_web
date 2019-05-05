@@ -19,6 +19,10 @@ class WebAppComponentSettings(AppComponentSettings):
         'use_https': True,
         'ssl_certificate': 'secure/certs/fullchain.pem',
         'ssl_certificate_key': 'secure/certs/privkey.pem',
+        'watch': {
+            'dir': './src',
+            'exclude': ['__pycache__']
+        },
         'nginx': {
             'template': 'nginx.conf',
             'name': 'web.conf'
@@ -106,8 +110,8 @@ class WebAppComponentTasks(AppComponentTasks):
 
     async def _sync_nginx_configs(self):
         nginx = NginxComponentSettings()
-        # if not nginx.enabled:
-        #     return
+        if not nginx.enabled:
+            return
 
         servers = [server async for server in self._get_upstream_servers()]
         template, path = self._settings.nginx_config
