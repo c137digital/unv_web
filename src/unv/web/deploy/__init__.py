@@ -21,7 +21,7 @@ class WebAppComponentSettings(AppComponentSettings):
         'ssl_certificate_key': 'secure/certs/privkey.pem',
         'watch': {
             'dir': './src',
-            'exclude': ['__pycache__']
+            'exclude': ['__pycache__', '*.egg-info']
         },
         'nginx': {
             'template': 'nginx.conf',
