@@ -116,4 +116,4 @@ class WebAppComponentTasks(AppComponentTasks):
                 settings = self.settings.systemd['instances']
                 count = await self._calc_instances_count(**settings)
             for instance in range(1, count + 1):
-                yield f"{host['private']}:{self.settings.port + instance}"
+                yield f"{host['private_ip']}:{self.settings.port + instance}"
