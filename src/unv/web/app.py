@@ -16,6 +16,7 @@ def setup_jinja2(app: web.Application):
     if not settings.pop('enabled'):
         return
 
+    settings['enable_async'] = True
     settings['loader'] = jinja2.ChoiceLoader([
         jinja2.PackageLoader(package)
         for package in APP_SETTINGS['components']

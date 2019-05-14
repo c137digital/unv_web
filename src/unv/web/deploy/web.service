@@ -4,16 +4,16 @@ After=network.target
 
 [Service]
 Type=simple
-User={{ settings.user }}
-Group={{ settings.user }}
-ExecStart={{ settings.bin }}
-WorkingDirectory={{ settings.home_abs }}
+User={{ deploy.settings.user }}
+Group={{ deploy.settings.user }}
+ExecStart={{ deploy.settings.bin }}
+WorkingDirectory={{ deploy.settings.home_abs }}
 LimitNOFILE={{ limit_nofile }}
 
-Environment=PYTHONPATH={{ settings.home_abs }}
-Environment=SETTINGS={{ settings.module }}
+Environment=PYTHONPATH={{ deploy.settings.home_abs }}
+Environment=SETTINGS={{ deploy.settings.module }}
 Environment=SETTINGS_DEPLOY_COMPONENTS_APP_INSTANCE={{ instance }}
-Environment=SETTINGS_DEPLOY_COMPONENTS_APP_HOST={{ private_ip }}
+Environment=SETTINGS_DEPLOY_COMPONENTS_APP_HOST={{ deploy._private_ip }}
 
 [Install]
 WantedBy=multi-user.target

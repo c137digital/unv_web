@@ -6,19 +6,10 @@ from .deploy import DEPLOY_SETTINGS
 
 
 async def render_template(
-        request, template_name, context=None, context_processors=None,
-        status=web.HTTPOk.status_code):
-    context = context or {}
-    context_processors = context_processors or {}
+        request, template_name, context=None, status=web.HTTPOk.status_code):
     template = request.app['jinja2'].get_template(template_name)
-
-    for key, processor in context_processors.items():
-        if key not in context:
-            value = await processor(request)
-            context[key] = value
-
     return web.Response(
-        text=template.render(context),
+        text=await template.render(context or {}),
         status=status, charset='utf-8',
         content_type='text/html'
     )
