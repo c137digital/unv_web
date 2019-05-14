@@ -102,18 +102,18 @@ DEPLOY_SETTINGS = WebAppComponentSettings()
 
 
 class WebAppComponentTasks(AppComponentTasks):
-    NAMESPACE = 'web'
     SETTINGS = DEPLOY_SETTINGS
 
     async def get_iptables_template(self):
         return self.settings.iptables_v4_rules
 
+    async def get_nginx_include_configs(self):
+        return [self.settings.nginx_config]
+
     async def get_upstream_servers(self):
         for _, host in get_hosts(self.settings.NAME):
             with self._set_host(host):
-                count = await self._get_systemd_instances_count()
+                count = await self._calc_instances_count(
+                    self.settings.systemd['instances'])
             for instance in range(1, count + 1):
                 yield f"{host['private']}:{self.settings.port + instance}"
-
-    async def get_nginx_include_configs(self):
-        return [self.settings.nginx_config]

@@ -45,8 +45,7 @@ def create_app(link_static: bool = False):
 
 def run_app(app):
     web.run_app(
-        app,
-        host=DEPLOY_SETTINGS.host,
+        app, host=DEPLOY_SETTINGS.host,
         port=DEPLOY_SETTINGS.port + DEPLOY_SETTINGS.instance,
         access_log=None
     )
