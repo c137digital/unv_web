@@ -113,7 +113,7 @@ class WebAppComponentTasks(AppComponentTasks):
     async def get_upstream_servers(self):
         for _, host in get_hosts(self.settings.NAME):
             with self._set_host(host):
-                count = await self._calc_instances_count(
-                    self.settings.systemd['instances'])
+                settings = self.settings.systemd['instances']
+                count = await self._calc_instances_count(**settings)
             for instance in range(1, count + 1):
                 yield f"{host['private']}:{self.settings.port + instance}"
