@@ -5,7 +5,6 @@ from unv.deploy.helpers import get_hosts
 
 
 class WebAppComponentSettings(AppComponentSettings):
-    NAME = 'web'
     DEFAULT = {
         'bin': 'app',
         'settings': 'secure.production',
@@ -28,8 +27,8 @@ class WebAppComponentSettings(AppComponentSettings):
             'v4': 'ipv4.rules'
         },
         'systemd': {
-            'template': 'web.service',
-            'name': 'web_{instance}.service',
+            'template': 'app.service',
+            'name': 'app_{instance}.service',
             'boot': True,
             'instances': {'count': 1}
         },

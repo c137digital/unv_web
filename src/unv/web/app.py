@@ -3,7 +3,9 @@ import jinja2
 
 from aiohttp import web
 
-from unv.app.settings import SETTINGS as APP_SETTINGS
+from unv.app.settings import (
+    SETTINGS as APP_SETTINGS, IS_DEVELOPMENT, IS_PRODUCTION, IS_TESTING
+)
 
 from .helpers import (
     url_for_static, url_with_domain, inline_static_from, make_url_for_func
@@ -26,12 +28,13 @@ def setup_jinja2(app: web.Application):
 
     app['jinja2'] = jinja2.Environment(**settings)
     app['jinja2'].globals.update({
-        'url_for_static': url_for_static,
-        'inline_static_from': inline_static_from,
-        'url_with_domain': url_with_domain,
         'url_for': make_url_for_func(app),
-        'for_development': APP_SETTINGS['env'] == 'development',
-        'for_production': APP_SETTINGS['env'] == 'production'
+        'url_for_static': url_for_static,
+        'url_with_domain': url_with_domain,
+        'inline_static_from': inline_static_from,
+        'IS_DEVELOPMENT': IS_DEVELOPMENT,
+        'IS_PRODUCTION': IS_PRODUCTION,
+        'IS_TESTING': IS_TESTING
     })
 
 
