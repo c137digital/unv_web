@@ -97,11 +97,11 @@ class WebAppComponentSettings(AppComponentSettings):
         return (self.local_root / self._data['iptables']['v4']).read_text()
 
 
-DEPLOY_SETTINGS = WebAppComponentSettings()
+SETTINGS = WebAppComponentSettings()
 
 
 class WebAppComponentTasks(AppComponentTasks):
-    SETTINGS = DEPLOY_SETTINGS
+    SETTINGS = SETTINGS
 
     async def get_iptables_template(self):
         return self.settings.iptables_v4_rules

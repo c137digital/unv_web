@@ -2,7 +2,7 @@ from aiohttp import web
 
 from unv.utils.files import calc_crc32_for_file
 
-from .deploy import DEPLOY_SETTINGS
+from .deploy import SETTINGS as DEPLOY_SETTINGS
 
 
 async def render_template(

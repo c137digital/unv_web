@@ -7,10 +7,9 @@ import uvloop
 
 from aiohttp import web
 
-from unv.app.helpers import get_app_components
-from unv.app.settings import IS_DEBUG
+from unv.app.settings import SETTINGS as APP_SETTINGS
 
-from .deploy import DEPLOY_SETTINGS
+from .deploy import SETTINGS as DEPLOY_SETTINGS
 
 
 def link_component_static_dirs(component):
@@ -33,9 +32,9 @@ def link_component_static_dirs(component):
 
 def create_app(link_static: bool = False):
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    app = web.Application(debug=IS_DEBUG)
+    app = web.Application()
 
-    for component in get_app_components():
+    for component in APP_SETTINGS.get_components():
         component.setup(app)
         if link_static:
             link_component_static_dirs(component)
