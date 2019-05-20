@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from unv.deploy.components.app import AppComponentTasks, AppComponentSettings
-from unv.deploy.helpers import get_hosts
+from unv.deploy.settings import SETTINGS as DEPLOY_SETTINGS
 
 
 class WebAppComponentSettings(AppComponentSettings):
@@ -110,7 +110,7 @@ class WebAppComponentTasks(AppComponentTasks):
         return [self.settings.nginx_config]
 
     async def get_upstream_servers(self):
-        for _, host in get_hosts(self.settings.NAME):
+        for _, host in DEPLOY_SETTINGS.get_hosts(self.settings.NAME):
             with self._set_host(host):
                 settings = self.settings.systemd['instances']
                 count = await self._calc_instances_count(**settings)
