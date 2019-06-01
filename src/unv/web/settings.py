@@ -2,8 +2,7 @@ import copy
 
 import jinja2
 
-from unv.app.core import ComponentSettings
-from unv.app.settings import SETTINGS as APP_SETTINGS
+from unv.app.settings import ComponentSettings, SETTINGS as APP_SETTINGS
 
 
 class WebSettings(ComponentSettings):

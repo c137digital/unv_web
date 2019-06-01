@@ -1,4 +1,5 @@
-prospector
+pylint
+pycodestyle
 pytest
 pytest-cov
 pytest-env
