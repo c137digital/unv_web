@@ -9,7 +9,7 @@ async def render_template(
         request, template_name, context=None, status=web.HTTPOk.status_code):
     template = request.app['jinja2'].get_template(template_name)
     return web.Response(
-        text=await template.render(context or {}),
+        text=await template.render_async(context or {}),
         status=status, charset='utf-8',
         content_type='text/html'
     )

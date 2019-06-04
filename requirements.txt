@@ -4,7 +4,7 @@ pytest
 pytest-cov
 pytest-env
 pytest-pythonpath
-pytest-asyncio
+pytest-aiohttp
 autopep8
 sphinx
 setuptools

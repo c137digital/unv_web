@@ -1,7 +1,12 @@
 SETTINGS = {
     'app': {
         'components': [
-            'unv.web'
-        ]
+            'unv.web',
+            'component'
+        ],
+        'env': 'testing'
+    },
+    'web': {
+        'link_static': False
     }
 }
