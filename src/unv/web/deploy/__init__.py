@@ -2,6 +2,7 @@ from pathlib import Path
 
 from unv.deploy.components.app import AppComponentTasks, AppComponentSettings
 from unv.deploy.settings import SETTINGS as DEPLOY_SETTINGS
+from unv.deploy.tasks import register
 
 
 class WebAppComponentSettings(AppComponentSettings):
@@ -116,3 +117,7 @@ class WebAppComponentTasks(AppComponentTasks):
                 count = await self._calc_instances_count(**settings)
             for instance in range(1, count + 1):
                 yield f"{host['private_ip']}:{self.settings.port + instance}"
+
+    @register
+    async def shell(self):
+        return await self._python.run('web_app_shell', interactive=True)
