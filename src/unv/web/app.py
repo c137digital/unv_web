@@ -31,7 +31,6 @@ def setup_jinja2(app: web.Application):
         return
 
     app['jinja2'] = jinja2.Environment(**SETTINGS.jinja2_settings)
-    print('settings', SETTINGS.jinja2_settings)
     app['jinja2'].globals.update({
         'url_for': make_url_for_func(app),
         'url_for_static': url_for_static,
