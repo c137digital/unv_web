@@ -1,37 +1,69 @@
 from pathlib import Path
 
+from unv.utils.collections import update_dict_recur
+
 from unv.deploy.components.app import AppComponentTasks, AppComponentSettings
 from unv.deploy.settings import SETTINGS as DEPLOY_SETTINGS
 from unv.deploy.tasks import register
 
 
 class WebAppComponentSettings(AppComponentSettings):
-    DEFAULT = {
-        'bin': 'app',
-        'settings': 'secure.production',
-        'instance': 1,
+    SCHEMA = update_dict_recur(AppComponentSettings.SCHEMA, {
+        'host': {'type': 'string', 'required': True},
+        'port': {'type': 'integer', 'required': True},
+        'domain': {'type': 'string', 'required': True},
+        'use_https': {'type': 'boolean', 'required': True},
+        'ssl_certificate': {'type': 'string', 'required': True},
+        'ssl_certificate_key': {'type': 'string', 'required': True},
+        'nginx': {
+            'type': 'dict',
+            'schema': {
+                'template': {'type': 'string', 'required': True},
+                'name': {'type': 'string', 'required': True}
+            },
+            'required': True
+        },
+        'iptables': {
+            'type': 'dict',
+            'schema': {
+                'v4': {'type': 'string', 'required': True}
+            },
+            'required': True
+        },
+        'static': {
+            'type': 'dict',
+            'schema': {
+                'public': {
+                    'type': 'dict',
+                    'schema': {
+                        'url': {'type': 'string', 'required': True},
+                        'dir': {'type': 'string', 'required': True}
+                    }
+                },
+                'private': {
+                    'type': 'dict',
+                    'schema': {
+                        'url': {'type': 'string', 'required': True},
+                        'dir': {'type': 'string', 'required': True}
+                    }
+                }
+            },
+            'required': True
+        }
+    })
+    DEFAULT = update_dict_recur(AppComponentSettings.DEFAULT, {
         'host': '0.0.0.0',
         'port': 8000,
         'domain': 'app.local',
         'use_https': True,
         'ssl_certificate': 'secure/certs/fullchain.pem',
         'ssl_certificate_key': 'secure/certs/privkey.pem',
-        'watch': {
-            'dir': './src',
-            'exclude': ['__pycache__', '*.egg-info']
-        },
         'nginx': {
             'template': 'nginx.conf',
             'name': 'web.conf'
         },
         'iptables': {
             'v4': 'ipv4.rules'
-        },
-        'systemd': {
-            'template': 'app.service',
-            'name': 'app_{instance}.service',
-            'boot': True,
-            'instances': {'count': 1}
         },
         'static': {
             'public': {
@@ -43,7 +75,7 @@ class WebAppComponentSettings(AppComponentSettings):
                 'dir': 'static/private'
             }
         }
-    }
+    }, copy=True)
 
     @property
     def ssl_certificate(self):
