@@ -4,7 +4,7 @@ from unv.utils.collections import update_dict_recur
 
 from unv.deploy.components.app import AppComponentTasks, AppComponentSettings
 from unv.deploy.settings import SETTINGS as DEPLOY_SETTINGS
-from unv.deploy.tasks import register
+from unv.deploy.tasks import register, onehost
 
 
 class WebAppComponentSettings(AppComponentSettings):
@@ -158,5 +158,9 @@ class WebAppComponentTasks(AppComponentTasks):
                 yield f"{host['private_ip']}:{self.settings.port + instance}"
 
     @register
+    @onehost
     async def shell(self):
-        return await self._python.run('web_app_shell', interactive=True)
+        return await self._python.run(
+            'web_app_shell', interactive=True,
+            prefix=f'SETTINGS={self.settings.module}'
+        )
