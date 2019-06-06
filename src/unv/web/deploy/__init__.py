@@ -52,7 +52,7 @@ class WebAppComponentSettings(AppComponentSettings):
             },
             'required': True
         }
-    })
+    }, copy=True)
     DEFAULT = update_dict_recur(AppComponentSettings.DEFAULT, {
         'host': '0.0.0.0',
         'port': 8000,
