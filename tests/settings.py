@@ -4,7 +4,7 @@ SETTINGS = {
             'unv.web',
             'component'
         ],
-        'env': 'testing'
+        'env': 'test'
     },
     'deploy': {
         'components': {

@@ -22,7 +22,7 @@ from .settings import SETTINGS
 def setup_event_loop():
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     loop = asyncio.get_event_loop()
-    if APP_SETTINGS.is_development:
+    if APP_SETTINGS.is_dev:
         loop.set_debug(True)
 
 
@@ -36,9 +36,9 @@ def setup_jinja2(app: web.Application):
         'url_for_static': url_for_static,
         'url_with_domain': url_with_domain,
         'inline_static_from': inline_static_from,
-        'for_developemnt': APP_SETTINGS.is_development,
-        'for_production': APP_SETTINGS.is_production,
-        'for_testing': APP_SETTINGS.is_testing
+        'for_dev': APP_SETTINGS.is_dev,
+        'for_prod': APP_SETTINGS.is_prod,
+        'for_test': APP_SETTINGS.is_test
     })
 
 
