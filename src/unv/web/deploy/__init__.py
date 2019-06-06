@@ -53,6 +53,7 @@ class WebAppSettings(AppSettings):
             'required': True
         }
     }, copy=True)
+
     DEFAULT = update_dict_recur(AppSettings.DEFAULT, {
         'host': '0.0.0.0',
         'port': 8000,
