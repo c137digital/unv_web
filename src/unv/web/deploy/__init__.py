@@ -2,14 +2,14 @@ from pathlib import Path
 
 from unv.utils.collections import update_dict_recur
 
-from unv.deploy.components.app import AppComponentTasks, AppComponentSettings
+from unv.deploy.components.app import AppTasks, AppSettings
 from unv.deploy.settings import SETTINGS as DEPLOY_SETTINGS
 from unv.deploy.tasks import register, onehost
 
 
-class WebAppComponentSettings(AppComponentSettings):
+class WebAppSettings(AppSettings):
     NAME = 'web'
-    SCHEMA = update_dict_recur(AppComponentSettings.SCHEMA, {
+    SCHEMA = update_dict_recur(AppSettings.SCHEMA, {
         'host': {'type': 'string', 'required': True},
         'port': {'type': 'integer', 'required': True},
         'domain': {'type': 'string', 'required': True},
@@ -53,7 +53,7 @@ class WebAppComponentSettings(AppComponentSettings):
             'required': True
         }
     }, copy=True)
-    DEFAULT = update_dict_recur(AppComponentSettings.DEFAULT, {
+    DEFAULT = update_dict_recur(AppSettings.DEFAULT, {
         'host': '0.0.0.0',
         'port': 8000,
         'domain': 'app.local',
@@ -137,10 +137,10 @@ class WebAppComponentSettings(AppComponentSettings):
         return (self.local_root / self._data['iptables']['v4']).read_text()
 
 
-SETTINGS = WebAppComponentSettings()
+SETTINGS = WebAppSettings()
 
 
-class WebAppComponentTasks(AppComponentTasks):
+class WebAppTasks(AppTasks):
     SETTINGS = SETTINGS
 
     async def get_iptables_template(self):
