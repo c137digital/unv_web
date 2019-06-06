@@ -12,8 +12,8 @@ LimitNOFILE={{ limit_nofile }}
 
 Environment=PYTHONPATH={{ deploy.settings.home_abs }}
 Environment=SETTINGS={{ deploy.settings.module }}
-Environment=SETTINGS_DEPLOY_COMPONENTS_APP_INSTANCE={{ instance }}
-Environment=SETTINGS_DEPLOY_COMPONENTS_APP_HOST={{ deploy.private_ip }}
+Environment=SETTINGS_DEPLOY_COMPONENTS_WEB_INSTANCE={{ instance }}
+Environment=SETTINGS_DEPLOY_COMPONENTS_WEB_HOST={{ deploy.private_ip }}
 
 [Install]
 WantedBy=multi-user.target
