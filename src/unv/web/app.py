@@ -43,7 +43,7 @@ def setup_jinja2(app: web.Application):
 
 
 def setup_static_dirs(app: Application):
-    if not SETTINGS.link_static:
+    if not DEPLOY_SETTINGS.static_link:
         return
 
     for component in app.components:

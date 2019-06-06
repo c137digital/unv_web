@@ -8,6 +8,7 @@ from unv.deploy.tasks import register
 
 
 class WebAppComponentSettings(AppComponentSettings):
+    NAME = 'web'
     SCHEMA = update_dict_recur(AppComponentSettings.SCHEMA, {
         'host': {'type': 'string', 'required': True},
         'port': {'type': 'integer', 'required': True},
@@ -33,6 +34,7 @@ class WebAppComponentSettings(AppComponentSettings):
         'static': {
             'type': 'dict',
             'schema': {
+                'link': {'type': 'boolean', 'required': True},
                 'public': {
                     'type': 'dict',
                     'schema': {
@@ -66,6 +68,7 @@ class WebAppComponentSettings(AppComponentSettings):
             'v4': 'ipv4.rules'
         },
         'static': {
+            'link': True,
             'public': {
                 'url': '/static/public',
                 'dir': 'static/public'
@@ -104,6 +107,10 @@ class WebAppComponentSettings(AppComponentSettings):
     @property
     def domain(self):
         return self._data['domain']
+
+    @property
+    def static_link(self):
+        return self._data['static']['link']
 
     @property
     def static_public_dir(self):

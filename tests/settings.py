@@ -6,7 +6,13 @@ SETTINGS = {
         ],
         'env': 'testing'
     },
-    'web': {
-        'link_static': False
+    'deploy': {
+        'components': {
+            'web': {
+                'static': {
+                    'link': False
+                }
+            }
+        }
     }
 }

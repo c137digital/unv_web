@@ -3,6 +3,7 @@ import pytest
 from aiohttp import web
 
 from unv.app.base import Application
+from unv.web.deploy import SETTINGS as DEPLOY_SETTINGS
 
 
 async def test_simple_web_app(aiohttp_client):
@@ -27,3 +28,5 @@ async def test_simple_web_app(aiohttp_client):
     assert resp.content_type == 'application/json'
     data = await resp.json()
     assert data['value'] == 2
+
+    assert not DEPLOY_SETTINGS.static_link

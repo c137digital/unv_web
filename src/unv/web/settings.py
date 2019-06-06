@@ -12,19 +12,15 @@ class WebSettings(ComponentSettings):
         'jinja2': {
             'type': 'dict',
             'required': True,
-            'schema': {'enabled': {'type': 'boolean'}}
+            'schema': {
+                'enabled': {'type': 'boolean', 'required': True}
+            }
         },
-        'link_static': {'type': 'boolean', 'required': True}
     }
     DEFAULT = {
         'autoreload': False,
-        'link_static': True,
         'jinja2': {'enabled': True},
     }
-
-    @property
-    def link_static(self):
-        return self._data['link_static']
 
     @property
     def jinja2_enabled(self):
