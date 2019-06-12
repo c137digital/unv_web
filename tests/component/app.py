@@ -1,9 +1,6 @@
 from aiohttp import web
 
-# TODO: add views with tests
-# view with json render
-# view with html render with jinja
-from unv.web.decorators import render, as_json
+from unv.web.decorators import render, as_json, with_headers
 
 
 async def index(request: web.Request):
@@ -15,6 +12,9 @@ async def page(request: web.Request):
     return {'value': 2}
 
 
+@with_headers({
+    'Accept-Some': '1'
+})
 @as_json
 async def json(request: web.Request):
     return {'value': 2}

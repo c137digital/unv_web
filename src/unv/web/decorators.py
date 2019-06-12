@@ -16,6 +16,17 @@ def as_json(f):
     return wrapper
 
 
+def with_headers(headers):
+    def with_headers_decorator(f):
+        @functools.wraps(f)
+        async def wrapper(request, *args, **kwargs):
+            response = await f(request, *args, **kwargs)
+            response.headers.update(headers)
+            return response
+        return wrapper
+    return with_headers_decorator
+
+
 def render(
         template_name: str, default_context: dict = None,
         status: int = web.HTTPOk.status_code):

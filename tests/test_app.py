@@ -28,5 +28,6 @@ async def test_simple_web_app(aiohttp_client):
     assert resp.content_type == 'application/json'
     data = await resp.json()
     assert data['value'] == 2
+    assert resp.headers['Accept-Some'] == '1'
 
     assert not DEPLOY_SETTINGS.static_link
