@@ -1,9 +1,10 @@
 import os
 import inspect
+import asyncio
 
 import uvloop
 import jinja2
-import asyncio
+import aioredis
 
 from pathlib import Path
 
@@ -11,6 +12,8 @@ from aiohttp import web
 
 from unv.app.base import Application
 from unv.app.settings import SETTINGS as APP_SETTINGS
+
+from unv.deploy.settings import SETTINGS as APP_DEPLOY_SETTINGS
 
 from .helpers import (
     url_for_static, url_with_domain, inline_static_from, make_url_for_func
@@ -40,6 +43,31 @@ def setup_jinja2(app: web.Application):
         'for_prod': APP_SETTINGS.is_prod,
         'for_test': APP_SETTINGS.is_test
     })
+
+
+async def create_connection_pool(app):
+    pool = await aioredis.create_redis_pool(
+        (SETTINGS.redis_host, SETTINGS.redis_port),
+        db=SETTINGS.redis_database,
+        minsize=SETTINGS.redis_min_connections,
+        maxsize=SETTINGS.redis_max_connections,
+        loop=app.loop
+    )
+    app['redis'] = pool
+
+
+async def close_connection_pool(app):
+    pool = app['redis']
+    pool.close()
+    await pool.wait_closed()
+
+
+def setup_redis(app: web.Application):
+    if not SETTINGS.redis_enabled:
+        return
+
+    app.on_startup.append(create_connection_pool)
+    app.on_cleanup.append(close_connection_pool)
 
 
 def setup_static_dirs(app: Application):

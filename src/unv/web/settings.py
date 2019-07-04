@@ -3,6 +3,7 @@ import copy
 import jinja2
 
 from unv.app.settings import ComponentSettings, SETTINGS as APP_SETTINGS
+from unv.deploy.components.redis import SETTINGS as REDIS_DEPLOY_SETTINGS
 
 
 class WebSettings(ComponentSettings):
@@ -16,10 +17,31 @@ class WebSettings(ComponentSettings):
                 'enabled': {'type': 'boolean', 'required': True}
             }
         },
+        'redis': {
+            'type': 'dict',
+            'schema': {
+                'enabled': {'type': 'boole an', 'required': True},
+                'connections': {
+                    'type': 'dict',
+                    'schema': {
+                        'min': {'type': 'integer', 'required': True},
+                        'max': {'type': 'integer', 'required': True}
+                    }
+                },
+                'host': {'type': 'string', 'required': False},
+                'port': {'type': 'integer', 'required': False},
+                'database': {'type': 'integer', 'required': True}
+            }
+        }
     }
     DEFAULT = {
         'autoreload': False,
         'jinja2': {'enabled': True},
+        'redis': {
+            'enabled': False,
+            'connections': {'min': 10, 'max': 50},
+            'database': 0
+        }
     }
 
     @property
@@ -38,6 +60,30 @@ class WebSettings(ComponentSettings):
         if 'jinja2.ext.i18n' not in settings.setdefault('extensions', []):
             settings['extensions'].append('jinja2.ext.i18n')
         return settings
+
+    @property
+    def redis_host(self):
+        return self._data['redis'].get('host', REDIS_DEPLOY_SETTINGS.host)
+
+    @property
+    def redis_port(self):
+        return self._data['redis'].get('port', REDIS_DEPLOY_SETTINGS.port)
+
+    @property
+    def redis_enabled(self):
+        return self._data['redis']['enabled']
+
+    @property
+    def redis_database(self):
+        return self._data['redis']['database']
+
+    @property
+    def redis_min_connections(self):
+        return self._data['redis']['connections']['min']
+
+    @property
+    def redis_max_connections(self):
+        return self._data['redis']['connections']['max']
 
 
 SETTINGS = WebSettings()

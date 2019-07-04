@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='unv.web',
-    version='0.3.13',
+    version='0.3.14',
     description="""Web application helpers for unv based on aiohttp""",
     url='http://github.com/c137digital/unv_web',
     author='Morty Space',
@@ -30,7 +30,10 @@ setup(
         'aiohttp',
         'uvloop',
         'ujson',
-        'jinja2'
+        'jinja2',
+
+        # TODO: move to package with redis deploy and web
+        'aioredis'
     ],
     zip_safe=True,
     entry_points={
