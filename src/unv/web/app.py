@@ -102,7 +102,10 @@ def run_web_app_task(app: web.Application):
 
 def setup(app: Application):
     app.register(web.Application())
+
     app.register_setup_task(setup_event_loop)
     app.register_setup_task(setup_jinja2)
     app.register_setup_task(setup_static_dirs)
+    app.register_setup_task(setup_redis)
+    
     app.register_run_task(run_web_app_task)

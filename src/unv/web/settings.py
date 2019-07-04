@@ -20,9 +20,10 @@ class WebSettings(ComponentSettings):
         'redis': {
             'type': 'dict',
             'schema': {
-                'enabled': {'type': 'boole an', 'required': True},
+                'enabled': {'type': 'boolean', 'required': True},
                 'connections': {
                     'type': 'dict',
+                    'required': True,
                     'schema': {
                         'min': {'type': 'integer', 'required': True},
                         'max': {'type': 'integer', 'required': True}
@@ -63,7 +64,9 @@ class WebSettings(ComponentSettings):
 
     @property
     def redis_host(self):
-        return self._data['redis'].get('host', REDIS_DEPLOY_SETTINGS.host)
+        hosts = list(REDIS_DEPLOY_SETTINGS.SETTINGS.get_hosts('redis'))
+        _, host = next(hosts) if hosts else None, ''
+        return self._data['redis'].get('host', host)
 
     @property
     def redis_port(self):

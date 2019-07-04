@@ -6,6 +6,11 @@ SETTINGS = {
         ],
         'env': 'test'
     },
+    'web': {
+        'redis': {
+            'enabled': False
+        }
+    },
     'deploy': {
         'components': {
             'web': {
