@@ -65,7 +65,7 @@ class WebSettings(ComponentSettings):
     @property
     def redis_host(self):
         hosts = list(REDIS_DEPLOY_SETTINGS.SETTINGS.get_hosts('redis'))
-        _, host = hosts[0]['private_ip'] if hosts else None, ''
+        host = hosts[0][1]['private_ip'] if hosts else ''
         return self._data['redis'].get('host', host)
 
     @property
