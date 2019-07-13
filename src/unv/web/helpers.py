@@ -44,7 +44,7 @@ def make_url_for_func(app):
         parts = {key: str(value) for key, value in parts.items()}
         url = app.router[route].url_for(**parts)
         if with_domain:
-            url = url_with_domain(url)
+            url = str(url_with_domain(url))
         return url
     return url_for
 
