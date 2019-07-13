@@ -1,3 +1,5 @@
+import urllib
+
 from aiohttp import web
 
 from unv.utils.files import calc_crc32_for_file
@@ -36,11 +38,12 @@ def url_with_domain(path: str):
     path = path.lstrip('/')
     if DEPLOY_SETTINGS.use_https:
         protocol = 'https'
-    return f'{protocol}://{DEPLOY_SETTINGS.domain}/{path}'
+    domain = DEPLOY_SETTINGS.domain.encode('idna').decode()
+    return f'{protocol}://{domain}/{path}'
 
 
-def make_url_for_func(app):
-    def url_for(route, with_domain=False, **parts):
+def make_url_for_func(app, with_domain=False):
+    def url_for(route, **parts):
         parts = {key: str(value) for key, value in parts.items()}
         url = app.router[route].url_for(**parts)
         if with_domain:

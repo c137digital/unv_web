@@ -36,12 +36,13 @@ def setup_jinja2(app: web.Application):
     app['jinja2'] = jinja2.Environment(**SETTINGS.jinja2_settings)
     app['jinja2'].globals.update({
         'url_for': make_url_for_func(app),
+        'url_for_with_domain': make_url_for_func(app, with_domain=True),
         'url_for_static': url_for_static,
         'url_with_domain': url_with_domain,
         'inline_static_from': inline_static_from,
-        'for_dev': APP_SETTINGS.is_dev,
-        'for_prod': APP_SETTINGS.is_prod,
-        'for_test': APP_SETTINGS.is_test
+        'is_dev': APP_SETTINGS.is_dev,
+        'is_prod': APP_SETTINGS.is_prod,
+        'is_test': APP_SETTINGS.is_test
     })
 
 
