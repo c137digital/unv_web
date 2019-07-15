@@ -20,7 +20,8 @@ class WebAppSettings(AppSettings):
             'type': 'dict',
             'schema': {
                 'template': {'type': 'string', 'required': True},
-                'name': {'type': 'string', 'required': True}
+                'name': {'type': 'string', 'required': True},
+                'upstream_name': {'type': 'string', 'required': True}
             },
             'required': True
         },
@@ -63,7 +64,8 @@ class WebAppSettings(AppSettings):
         'ssl_certificate_key': 'secure/certs/privkey.pem',
         'nginx': {
             'template': 'nginx.conf',
-            'name': 'web.conf'
+            'name': 'web.conf',
+            'upstream_name': 'app'
         },
         'iptables': {
             'v4': 'ipv4.rules'
@@ -104,6 +106,10 @@ class WebAppSettings(AppSettings):
         if not template.startswith('/'):
             template = (self.local_root / template).resolve()
         return Path(template), path
+
+    @property
+    def nginx_upstream_name(self):
+        return self._data['nginx']['upstream_name']
 
     @property
     def domain(self):
