@@ -11,4 +11,6 @@
 [![PyPI version fury.io](https://badge.fury.io/py/unv.web.svg)](https://pypi.python.org/pypi/unv_web/)
 [![PyPI download month](https://img.shields.io/pypi/dm/unv_web.svg)](https://pypi.python.org/pypi/unv_web/)
 
-## Detailed description
+## Main concept
+
+Wrapper and helper functions based on aiohttp
