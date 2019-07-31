@@ -4,6 +4,7 @@ import jinja2
 
 from unv.app.settings import ComponentSettings, SETTINGS as APP_SETTINGS
 from unv.deploy.components.redis import SETTINGS as REDIS_DEPLOY_SETTINGS
+from unv.deploy.settings import SETTINGS as DEPLOY_SETTINGS
 
 
 class WebSettings(ComponentSettings):
@@ -64,7 +65,7 @@ class WebSettings(ComponentSettings):
 
     @property
     def redis_host(self):
-        hosts = list(REDIS_DEPLOY_SETTINGS.SETTINGS.get_hosts('redis'))
+        hosts = list(DEPLOY_SETTINGS.get_hosts('redis'))
         host = hosts[0][1]['private_ip'] if hosts else ''
         return self._data['redis'].get('host', host)
 
