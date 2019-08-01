@@ -116,6 +116,14 @@ class WebAppSettings(AppSettings):
         return self._data['domain'].encode('idna').decode()
 
     @property
+    def server_domains(self):
+        """Return utf-8 domain and encoded by idna."""
+        domains = [self.domain]
+        if self._data['domain'] != self.domain:
+            domains.append(self._data['domain'])
+        return ' '.join(domains)
+
+    @property
     def static_link(self):
         return self._data['static']['link']
 
