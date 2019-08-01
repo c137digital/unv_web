@@ -38,8 +38,7 @@ def url_with_domain(path: str):
     path = path.lstrip('/')
     if DEPLOY_SETTINGS.use_https:
         protocol = 'https'
-    domain = DEPLOY_SETTINGS.domain.encode('idna').decode()
-    return f'{protocol}://{domain}/{path}'
+    return f'{protocol}://{DEPLOY_SETTINGS.domain}/{path}'
 
 
 def make_url_for_func(app, with_domain=False):

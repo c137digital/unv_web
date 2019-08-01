@@ -113,7 +113,7 @@ class WebAppSettings(AppSettings):
 
     @property
     def domain(self):
-        return self._data['domain']
+        return self._data['domain'].encode('idna').decode()
 
     @property
     def static_link(self):
