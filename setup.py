@@ -35,6 +35,8 @@ setup(
         # TODO: move to package with redis deploy and web
         'aioredis'
     ],
+
+    # TODO: add packages from dev to extras
     zip_safe=True,
     entry_points={
         'console_scripts': [
