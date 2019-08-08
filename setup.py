@@ -35,8 +35,22 @@ setup(
         # TODO: move to package with redis deploy and web
         'aioredis'
     ],
-
-    # TODO: add packages from dev to extras
+    extras_require={
+        'dev': [
+            'pylint',
+            'pycodestyle',
+            'pytest',
+            'pytest-cov',
+            'pytest-env',
+            'pytest-pythonpath',
+            'pytest-aiohttp',
+            'autopep8',
+            'sphinx',
+            'setuptools',
+            'wheel',
+            'twine'
+        ]
+    },
     zip_safe=True,
     entry_points={
         'console_scripts': [
