@@ -11,6 +11,6 @@
 [![PyPI version fury.io](https://badge.fury.io/py/unv.web.svg)](https://pypi.python.org/pypi/unv_web/)
 [![PyPI download month](https://img.shields.io/pypi/dm/unv_web.svg)](https://pypi.python.org/pypi/unv_web/)
 
-## Main concept
+## aiohttp based web-lib
 
-Wrapper and helper functions based on aiohttp
+Adds helpers to base components and integrates with unv.app
