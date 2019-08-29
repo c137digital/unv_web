@@ -17,19 +17,16 @@ async def render_template(
     )
 
 
-def url_for_static(path: str, private: bool = False, with_hash: bool = False):
-    url = DEPLOY_SETTINGS.static_public_url
-    directory = DEPLOY_SETTINGS.static_public_dir
-
-    if private:
-        url = DEPLOY_SETTINGS.static_private_url
-        directory = DEPLOY_SETTINGS.static_private_dir
-
+def url_for_static(path: str, with_hash: bool = False):
+    url = DEPLOY_SETTINGS.static_url
+    directory = DEPLOY_SETTINGS.static_dir
     real_path = directory / path.lstrip('/')
     hash_ = ''
+
     if with_hash:
         hash_ = '?hash={}'.format(calc_crc32_for_file(real_path))
     path = str(path).replace(str(directory), '', 1).lstrip('/')
+
     return f"{url}/{path}{hash_}"
 
 
@@ -51,10 +48,6 @@ def make_url_for_func(app, with_domain=False):
     return url_for
 
 
-def inline_static_from(path, private=False):
-    directory = DEPLOY_SETTINGS.static_public_dir
-    if private:
-        directory = DEPLOY_SETTINGS.static_private_dir
-
-    with (directory / path).open('r') as f:
+def inline_static_from(path):
+    with (DEPLOY_SETTINGS.static_dir / path).open('r') as f:
         return f.read().replace("\n", "")

@@ -6,4 +6,4 @@ def test_url_with_domain():
 
 
 def test_simple_static_url():
-    assert url_for_static('asd.txt') == '/static/public/asd.txt'
+    assert url_for_static('asd.txt') == '/static/asd.txt'

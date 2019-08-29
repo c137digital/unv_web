@@ -78,18 +78,12 @@ def setup_static_dirs(app: Application):
     for component in app.components:
         component_path = Path(inspect.getfile(component)).parent
         static_path = component_path / 'static'
-        public_dir = DEPLOY_SETTINGS.static_public_dir
-        private_dir = DEPLOY_SETTINGS.static_private_dir
-
+        public_dir = DEPLOY_SETTINGS.static_dir
         public_app_dir = static_path / public_dir.name
+
         for directory in public_app_dir.glob('*'):
             os.system('mkdir -p {}'.format(public_dir))
             os.system('ln -sf {} {}'.format(directory, public_dir))
-
-        private_app_dir = static_path / private_dir.name
-        for directory in private_app_dir.glob('*'):
-            os.system('mkdir -p {}'.format(private_dir))
-            os.system('ln -sf {} {}'.format(directory, private_dir))
 
 
 def run_web_app_task(app: web.Application):
@@ -108,5 +102,5 @@ def setup(app: Application):
     app.register_setup_task(setup_jinja2)
     app.register_setup_task(setup_static_dirs)
     app.register_setup_task(setup_redis)
-    
+
     app.register_run_task(run_web_app_task)

@@ -36,20 +36,8 @@ class WebAppSettings(AppSettings):
             'type': 'dict',
             'schema': {
                 'link': {'type': 'boolean', 'required': True},
-                'public': {
-                    'type': 'dict',
-                    'schema': {
-                        'url': {'type': 'string', 'required': True},
-                        'dir': {'type': 'string', 'required': True}
-                    }
-                },
-                'private': {
-                    'type': 'dict',
-                    'schema': {
-                        'url': {'type': 'string', 'required': True},
-                        'dir': {'type': 'string', 'required': True}
-                    }
-                }
+                'url': {'type': 'string', 'required': True},
+                'dir': {'type': 'string', 'required': True}
             },
             'required': True
         }
@@ -72,14 +60,8 @@ class WebAppSettings(AppSettings):
         },
         'static': {
             'link': True,
-            'public': {
-                'url': '/static/public',
-                'dir': 'static/public'
-            },
-            'private': {
-                'url': '/static/private',
-                'dir': 'static/private'
-            }
+            'url': '/static',
+            'dir': 'static'
         }
     }, copy=True)
 
@@ -128,20 +110,12 @@ class WebAppSettings(AppSettings):
         return self._data['static']['link']
 
     @property
-    def static_public_dir(self):
-        return self.home_abs / Path(self._data['static']['public']['dir'])
+    def static_dir(self):
+        return self.home_abs / Path(self._data['static']['dir'])
 
     @property
-    def static_private_dir(self):
-        return self.home_abs / Path(self._data['static']['private']['dir'])
-
-    @property
-    def static_public_url(self):
-        return self._data['static']['public']['url']
-
-    @property
-    def static_private_url(self):
-        return self._data['static']['private']['url']
+    def static_url(self):
+        return self._data['static']['url']
 
     @property
     def use_https(self):
